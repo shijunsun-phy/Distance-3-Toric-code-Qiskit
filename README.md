@@ -6,6 +6,8 @@ This repository is a compact demo of building and simulating a toric-code quantu
 
 It starts from the lattice geometry, constructs the parity-check matrices, prepares a logical toric-code state, injects Pauli noise, measures stabilizer syndromes with ancillas, and decodes with minimum-weight perfect matching (MWPM). The key engineering upgrade over the original notebook is a **Clifford-only logical-state preparation path**, so the full circuit can be run with **efficient stabilizer simulation** rather than a generic statevector initializer.
 
+The repository also includes a lightweight pytest suite that validates the algebraic toric-code construction, logical-operator conventions, syndrome extraction, and decoder behavior.
+
 ---
 
 ## Physics intuition
@@ -42,6 +44,9 @@ Measured syndromes are passed to `pymatching`, which returns candidate correctio
 ### 6. Clifford state preparation for efficient simulation
 To be compatible with the stabilizer simulation pathway, I use a Clifford-only preparation circuit for the toric-code logical state, so the end-to-end demo can run efficiently using `AerSimulator(method="stabilizer")`.
 
+### 7. Unit and integration tests
+The repo includes a pytest-based test suite covering toric-code algebra, stabilizer commutation, logical-operator conventions, syndrome parsing, Qiskit syndrome extraction, and PyMatching decoding.
+
 ---
 
 ## Quickstart
@@ -74,6 +79,26 @@ You can also vary the distance and noise rate:
 python scripts/run_toric_demo.py --distance 3 --p 0.08 --shots 100
 ```
 
+Run the full test suite:
+
+```bash
+pytest -v
+```
+
+Run only the unit tests:
+
+```bash
+pytest tests/unit -v
+```
+
+Run only the integration tests:
+
+```bash
+pytest tests/integration -v
+```
+
+The unit tests check the algebraic construction and helper functions, while the integration tests check that the Qiskit syndrome-extraction circuit agrees with the classical syndrome calculation and that MWPM decoding behaves correctly on simple errors.
+
 ---
 
 ## Repository layout
@@ -87,7 +112,14 @@ python scripts/run_toric_demo.py --distance 3 --p 0.08 --shots 100
 ├── scripts/
 │   └── run_toric_demo.py
 ├── tests/
-│   └── test_toric_helpers.py
+│   ├── conftest.py
+│   ├── unit/
+│   │   ├── test_core.py
+│   │   ├── test_circuits.py
+│   │   └── test_simulate_helpers.py
+│   └── integration/
+│       ├── test_decoder.py
+│       └── test_qiskit_syndrome.py
 └── toric_qec/
     ├── __init__.py
     ├── core.py
@@ -98,7 +130,7 @@ python scripts/run_toric_demo.py --distance 3 --p 0.08 --shots 100
 - `notebooks/` keeps the original exploratory workflow and presentation-style narrative.
 - `toric_qec/` turns the notebook logic into reusable Python modules.
 - `scripts/run_toric_demo.py` is the primary recruiter-facing entrypoint.
-- `tests/` keeps one lightweight sanity check without bloating the repo.
+- `tests/` contains a pytest-based unit and integration test suite. 
 
 
 ## Notes

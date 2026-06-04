@@ -101,6 +101,31 @@ The unit tests check the algebraic construction and helper functions, while the 
 
 ---
 
+## Testing
+
+1. **Unit tests** including the toric-code lattice construction, parity-check matrix dimensions, weight-4 stabilizer checks, CSS commutation condition, encoded-qubit count, logical-operator pairing, GF(2) row-basis extraction, Pauli-error sampling, Pauli-label conversion, syndrome calculation, and Qiskit count-string parsing.
+2. **Integration tests** check that independently written components work together. In particular, they verify that syndromes measured by the Qiskit stabilizer-simulation circuit agree with the classical parity-check calculation and that pymatching corrects simple single-qubit errors without producing a logical failure.
+
+Run the full test suite:
+
+```bash
+pytest -v
+```
+
+Run only the unit tests:
+
+```bash
+pytest tests/unit -v
+```
+
+Run only the integration tests:
+
+```bash
+pytest tests/integration -v
+```
+
+---
+
 ## Repository layout
 
 ```text

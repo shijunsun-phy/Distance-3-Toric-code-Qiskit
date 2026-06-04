@@ -105,23 +105,30 @@ def build_logicals(code: ToricCode):
     n = code.n
     L = code.L
 
-    X1 = np.zeros(n, dtype=np.uint8)
-    X2 = np.zeros(n, dtype=np.uint8)
-    Z1 = np.zeros(n, dtype=np.uint8)
-    Z2 = np.zeros(n, dtype=np.uint8)
+    LX = np.zeros((2, n), dtype=np.uint8)
+    LZ = np.zeros((2, n), dtype=np.uint8)
 
-    for x in range(L):
-        X1[code.h(x, 0)] = 1
-        Z2[code.h(x, 0)] = 1
-
+    # Logical X_0: dual vertical cycle crossing a horizontal primal cycle.
+    # Use horizontal edges at fixed x = 0, running over all y.
     for y in range(L):
-        X2[code.v(0, y)] = 1
-        Z1[code.v(0, y)] = 1
+        LX[0, code.h(0, y)] = 1
 
-    LX = np.stack([X1, X2], axis=0)
-    LZ = np.stack([Z1, Z2], axis=0)
+    # Logical X_1: dual horizontal cycle crossing a vertical primal cycle.
+    # Use vertical edges at fixed y = 0, running over all x.
+    for x in range(L):
+        LX[1, code.v(x, 0)] = 1
+
+    # Logical Z_0: primal horizontal cycle.
+    # Use horizontal edges at fixed y = 0, running over all x.
+    for x in range(L):
+        LZ[0, code.h(x, 0)] = 1
+
+    # Logical Z_1: primal vertical cycle.
+    # Use vertical edges at fixed x = 0, running over all y.
+    for y in range(L):
+        LZ[1, code.v(0, y)] = 1
+
     return LX, LZ
-
 
 def gf2_row_basis(M: np.ndarray) -> np.ndarray:
     """Independent row basis over GF(2)."""
